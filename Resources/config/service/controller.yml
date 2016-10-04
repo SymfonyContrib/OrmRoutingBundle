@@ -1,0 +1,5 @@
+services:
+    orm_routing.redirect_controller:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Controller\RedirectController
+        arguments:
+            - "@router"

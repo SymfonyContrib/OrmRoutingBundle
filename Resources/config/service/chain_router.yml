@@ -1,0 +1,7 @@
+services:
+    orm_routing.router:
+        class: Symfony\Cmf\Component\Routing\ChainRouter
+        arguments:
+            - "@?logger"
+        calls:
+            - [setContext, ["@router.request_context"]]

@@ -1,0 +1,48 @@
+SymfonyContrib\Bundle\OrmRoutingBundle\Entity\Route:
+    type: entity
+    table: route
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+#            unique: true
+        type:
+            type: string
+            limit: 1
+            options:
+                comment: 'Type of route. R = Redirect'
+        position:
+            type: integer
+        variablePattern:
+            type: string
+            nullable: true
+        staticPrefix:
+            column: static_prefix
+            type: string
+            nullable: true
+        uri:
+            type: string
+            nullable: true
+        destRouteName:
+            type: string
+            nullable: true
+        parameters:
+            type: json_array
+            nullable: true
+        permanent:
+            type: boolean
+            nullable: true
+    manyToOne:
+        destRoute:
+            targetEntity: Route
+            joinColumn:
+                name: route_id
+                referencedColumnName: id
+    indexes:
+        route_prefix:
+            columns:
+                - static_prefix

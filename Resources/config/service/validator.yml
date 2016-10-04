@@ -1,0 +1,9 @@
+services:
+    orm_routing.validator.route_defaults:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Validator\Constraints\RouteDefaultsValidator
+        arguments:
+            - "@controller_resolver"
+            - "@templating"
+        tags:
+            - name: validator.contraint_validator
+              alias: orm_routing.validator.route_defaults

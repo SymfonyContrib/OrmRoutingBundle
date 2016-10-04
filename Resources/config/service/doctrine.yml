@@ -1,0 +1,18 @@
+services:
+    orm_routing.auto.adapter.doctrine_orm:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Adapter\DoctrineOrmAdapter
+        arguments:
+            - "@doctrine.orm.entity_manager"
+        tags:
+            - name: orm_routing.auto.adapter
+              alias: doctrine_orm
+
+    orm_routing_auto.doctine.orm.route_listener:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Doctrine\AutoRouteListener
+        arguments:
+            - "@service_container"
+        tags:
+            - name: doctrine.event_listener
+              event: onFlush
+            - name: doctrine.event_listener
+              event: endFlush

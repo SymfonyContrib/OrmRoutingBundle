@@ -1,0 +1,26 @@
+services:
+    orm_routing.orm_content_repository:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Doctrine\ContentRepository
+        arguments:
+            - "@doctrine"
+        calls:
+            - [setManagerName, ["%orm_routing.dynamic.orm.manager_name%"]]
+
+    orm_routing.content_repository:
+        alias: orm_routing.orm_content_repository
+
+    orm_routing.orm_candidates:
+        class: Symfony\Cmf\Component\Routing\Candidates\Candidates
+        arguments:
+            - "%orm_routing.dynamic.locales%"
+            - "%orm_routing.dynamic.limit_candidates%"
+
+    orm_routing.route_provider:
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Doctrine\RouteProvider
+        arguments:
+            - "@doctrine"
+            - "@orm_routing.orm_candidates"
+            - SymfonyContrib\Bundle\OrmRoutingBundle\Entity\Route
+        calls:
+            - [setManagerName, ["%orm_routing.dynamic.orm.manager_name%"]]
+            - [setRouteCollectionLimit, ["%orm_routing.route_collection_limit%"]]

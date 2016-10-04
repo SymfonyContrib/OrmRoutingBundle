@@ -1,0 +1,30 @@
+services:
+    orm_routing_auto.token_provider.content_method:
+        class: Symfony\Cmf\Component\RoutingAuto\TokenProvider\ContentMethodProvider
+        arguments:
+            - "@orm_routing.auto.slugifier"
+        tags:
+            - name: orm_routing.auto.token_provider
+              alias: content_method
+
+    orm_routing_auto.token_provider.content_datetime:
+        class: Symfony\Cmf\Component\RoutingAuto\TokenProvider\ContentDateTimeProvider
+        arguments:
+            - "@orm_routing.auto.slugifier"
+        tags:
+            - name: orm_routing.auto.token_provider
+              alias: content_datetime
+
+    orm_routing_auto.token_provider.content_locale:
+        class: Symfony\Cmf\Component\RoutingAuto\TokenProvider\ContentLocaleProvider
+        tags:
+            - name: orm_routing.auto.token_provider
+              alias: content_locale
+
+    orm_routing_auto.token_provider.container:
+        class: Symfony\Cmf\Component\RoutingAuto\TokenProvider\SymfonyContainerParameterProvider
+        arguments:
+            - "@service_container"
+        tags:
+            - name: orm_routing.auto.token_provider
+              alias: container

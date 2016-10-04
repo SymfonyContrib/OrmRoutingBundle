@@ -1,0 +1,39 @@
+{
+    "name": "symfonycontrib/orm-routing-bundle",
+    "type": "symfony-bundle",
+    "description": "SymfonyContrib OrmRoutingBundle",
+    "keywords": ["routing", "database"],
+    "homepage": "http://symfonycontrib.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Symfony CMF Community",
+            "homepage": "https://github.com/symfony-cmf/RoutingBundle/contributors"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "^3.0",
+        "doctrine/doctrine-bundle": "^1.6",
+        "symfony-cmf/routing":      "^1.4"
+    },
+    "require-dev": {
+        "symfony-cmf/core-bundle": "^2.0",
+        "symfony/monolog-bundle":  "^3.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "conflict": {
+        "symfony-cmf/routing-bundle":      "*",
+        "symfony-cmf/routing-auto-bundle": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "SymfonyContrib\\Bundle\\OrmRoutingBundle\\": ""
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}

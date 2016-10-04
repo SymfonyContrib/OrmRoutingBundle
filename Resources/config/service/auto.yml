@@ -1,0 +1,54 @@
+services:
+    orm_routing.auto.slugifier:
+        class: Symfony\Cmf\Api\Slugifier\CallbackSlugifier
+        arguments:
+            - 'Ferrandini\Urlizer::urlize'
+
+    orm_routing.auto.auto_route_manager:
+        class: Symfony\Cmf\Component\RoutingAuto\AutoRouteManager
+        arguments:
+            - "@orm_routing.auto.adapter"
+            - "@orm_routing.auto.uri_generator"
+            - "@orm_routing.auto.defunct_route_handler.delegating"
+            - "@orm_routing.auto.uri_context_collection_builder"
+
+    orm_routing.auto.uri_generator:
+        class: Symfony\Cmf\Component\RoutingAuto\UriGenerator
+        arguments:
+            - "@orm_routing.auto.service_registry"
+
+    orm_routing.auto.uri_context_collection_builder:
+        class: Symfony\Cmf\Component\RoutingAuto\UriContextCollectionBuilder
+        arguments:
+            - "@orm_routing.auto.metadata.factory"
+            - "@orm_routing.auto.adapter"
+
+    orm_routing.auto.service_registry:
+        class: Symfony\Cmf\Component\RoutingAuto\ServiceRegistry
+
+    orm_routing.auto.metadata.loader.yaml:
+        class: Symfony\Cmf\Component\RoutingAuto\Mapping\Loader\YmlFileLoader
+        arguments:
+            - "@file_locator"
+
+    orm_routing.auto.metadata.loader.resolver:
+        class: Symfony\Component\Config\Loader\LoaderResolver
+        arguments:
+            - ["@orm_routing.auto.metadata.loader.yaml"]
+
+    orm_routing.auto.metadata.loader.delegating:
+        class: Symfony\Component\Config\Loader\DelegatingLoader
+        arguments:
+            - "@orm_routing.auto.metadata.loader.resolver"
+
+    orm_routing.auto.metadata.factory.builder:
+        class: Symfony\Cmf\Component\RoutingAuto\Mapping\MetadataFactoryBuilder
+        arguments:
+            - "@orm_routing.auto.metadata.loader.delegating"
+            - "%orm_routing.auto.metadata.loader.resources%"
+
+    orm_routing.auto.metadata.factory:
+        class: Symfony\Cmf\Component\RoutingAuto\Mapping\MetadataFactory
+        factory:
+            - "@orm_routing.auto.metadata.factory.builder"
+            - getMetadataFactory

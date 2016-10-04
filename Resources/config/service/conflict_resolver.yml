@@ -1,0 +1,14 @@
+services:
+    orm_routing.auto.conflict_resolver.auto_increment:
+        class: Symfony\Cmf\Component\RoutingAuto\ConflictResolver\AutoIncrementConflictResolver
+        arguments:
+            - "@orm_routing.auto.adapter"
+        tags:
+            - name: orm_routing.auto.conflict_resolver
+              alias: auto_increment
+
+    orm_routing.auto.conflict_resolver.throw_exception:
+        class: Symfony\Cmf\Component\RoutingAuto\ConflictResolver\ThrowExceptionConflictResolver
+        tags:
+            - name: orm_routing.auto.conflict_resolver
+              alias: throw_exception
