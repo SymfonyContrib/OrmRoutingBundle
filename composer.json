@@ -20,7 +20,7 @@
         "symfony/framework-bundle": "^3.0",
         "doctrine/doctrine-bundle": "^1.6",
         "symfony-cmf/routing":      "^1.4",
-        "symfony-cmf/routing-auto": "dev-master#54b53a1"
+        "symfony-cmf/routing-auto": "dev-master#54b53a1",
         "aferrandini/urlizer":      "1.0.*"
     },
     "require-dev": {
