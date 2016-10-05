@@ -477,8 +477,8 @@ class Route extends SymfonyRoute implements RouteObjectInterface, RedirectRouteI
      */
     public function setType($type)
     {
-//        $this->setDefault('type', $type);
         $this->type = $type;
+        $this->setDefault('type', $type);
 
         return $this;
     }

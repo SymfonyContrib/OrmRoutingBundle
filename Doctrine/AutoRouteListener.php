@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Symfony\Cmf\Component\RoutingAuto\AutoRouteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Cmf\Component\RoutingAuto\UriContextCollection;
+use SymfonyContrib\Bundle\OrmRoutingBundle\Context\UriContextCollection;
 use Symfony\Cmf\Component\RoutingAuto\Mapping\Exception\ClassNotMappedException;
 
 /**

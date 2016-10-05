@@ -71,13 +71,15 @@ class DoctrineOrmAdapter implements AdapterInterface
      */
     public function createAutoRoute(UriContext $uriContext, $contentEntity, $autoRouteTag)
     {
-        $name  = get_class($contentEntity).':'.$contentEntity->getId();
+        $name  = $this->buildContentId($contentEntity);
+
         $route = new Route();
         $route->setName($name);
         $route->setContent($contentEntity);
         $route->setStaticPrefix($uriContext->getUri());
         $route->setAutoRouteTag($autoRouteTag);
         $route->setType(AutoRouteInterface::TYPE_PRIMARY);
+//        $route->setType(Route::TYPE_AUTO);
 
         foreach ($uriContext->getDefaults() as $key => $value) {
             $route->setDefault($key, $value);
@@ -90,7 +92,7 @@ class DoctrineOrmAdapter implements AdapterInterface
 
     public function createOrUpdateAutoRoute(UriContext $uriContext, $contentEntity, $autoRouteTag)
     {
-        $name  = get_class($contentEntity).':'.$contentEntity->getId();
+        $name = $this->buildContentId($contentEntity);
 
         if (!$route = $this->findRouteForName($name)) {
             $route = new Route();
@@ -99,7 +101,7 @@ class DoctrineOrmAdapter implements AdapterInterface
 
         $route->setContent($contentEntity);
         $route->setStaticPrefix($uriContext->getUri());
-//        $route->setAutoRouteTag($autoRouteTag);
+        $route->setAutoRouteTag($autoRouteTag);
         $route->setType(Route::TYPE_AUTO);
 
         foreach ($uriContext->getDefaults() as $key => $value) {
@@ -133,11 +135,7 @@ class DoctrineOrmAdapter implements AdapterInterface
      */
     public function compareAutoRouteContent(AutoRouteInterface $autoRoute, $contentEntity)
     {
-        if ($autoRoute->getContent() === $contentEntity) {
-            return true;
-        }
-
-        return false;
+        return ($autoRoute->getName() === $this->buildContentId($contentEntity));
     }
 
     /**
@@ -163,5 +161,10 @@ class DoctrineOrmAdapter implements AdapterInterface
         return $this->entityManager
             ->getRepository(Route::class)
             ->findOneBy(['name' => $name]);
+    }
+
+    public function buildContentId($contentEntity)
+    {
+        return get_class($contentEntity).':'.$contentEntity->getId();
     }
 }

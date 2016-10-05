@@ -15,4 +15,7 @@ services:
             - name: doctrine.event_listener
               event: onFlush
             - name: doctrine.event_listener
+            # @todo ORM does not have a endFlush event. Need to re-architect
+            # this to handle modifying and deleting routes in the defunct
+            # handlers appropriately.
               event: endFlush
