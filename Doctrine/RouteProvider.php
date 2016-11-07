@@ -5,12 +5,14 @@ namespace SymfonyContrib\Bundle\OrmRoutingBundle\Doctrine;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Cmf\Component\Routing\Candidates\CandidatesInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SymfonyContrib\Bundle\OrmRoutingBundle\Entity\Route;
 
 /**
  * Provider loading routes from Doctrine.
@@ -122,7 +124,7 @@ class RouteProvider implements RouteProviderInterface
             throw new RouteNotFoundException(sprintf('Route "%s" is not handled by this route provider', $name));
         }
 
-        $route = $this->getRouteRepository()->findOneBy(array('name' => $name));
+        $route = $this->getRouteRepository()->findOneBy(['name' => $name]);
         if (!$route) {
             throw new RouteNotFoundException("No route found for name '$name'");
         }
@@ -161,7 +163,7 @@ class RouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @return ObjectRepository
+     * @return EntityRepository
      */
     protected function getRouteRepository()
     {

@@ -5,7 +5,9 @@ namespace SymfonyContrib\Bundle\OrmRoutingBundle\Doctrine;
 use Doctrine\Common\Persistence\Event\ManagerEventArgs;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Symfony\Cmf\Component\RoutingAuto\AutoRouteManager;
+use Symfony\Cmf\Component\RoutingAuto\Mapping\MetadataFactory;
+use Symfony\Cmf\Component\RoutingAuto\UriContext;
+use SymfonyContrib\Bundle\OrmRoutingBundle\Manager\AutoRouteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SymfonyContrib\Bundle\OrmRoutingBundle\Context\UriContextCollection;
 use Symfony\Cmf\Component\RoutingAuto\Mapping\Exception\ClassNotMappedException;
@@ -15,10 +17,17 @@ use Symfony\Cmf\Component\RoutingAuto\Mapping\Exception\ClassNotMappedException;
  */
 class AutoRouteListener
 {
+    /** @var  bool */
     protected $postFlushDone = false;
 
+    /** @var  ContainerInterface */
     protected $container;
 
+    /**
+     * AutoRouteListener constructor.
+     *
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -34,16 +43,40 @@ class AutoRouteListener
         return $this->container->get('orm_routing.auto.auto_route_manager');
     }
 
+    /**
+     * @return MetadataFactory
+     */
     protected function getMetadataFactory()
     {
         return $this->container->get('orm_routing.auto.metadata.factory');
     }
 
+    /**
+     * @return ContentRepository
+     */
+    protected function getContentRepository()
+    {
+        return $this->container->get('orm_routing.orm_content_repository');
+    }
+
+    /**
+     * @return RouteProvider
+     */
+    protected function getRouteProvider()
+    {
+        return $this->container->get('orm_routing.route_provider');
+    }
+
+    /**
+     * @param OnFlushEventArgs $args
+     */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $em  = $args->getEntityManager();
-        $uow = $em->getUnitOfWork();
-        $arm = $this->getAutoRouteManager();
+        $em          = $args->getEntityManager();
+        $uow         = $em->getUnitOfWork();
+        $manager     = $this->getAutoRouteManager();
+        $contentRepo = $this->getContentRepository();
+        $provider    = $this->getRouteProvider();
 
         $scheduledInserts = $uow->getScheduledEntityInsertions();
         $scheduledUpdates = $uow->getScheduledEntityUpdates();
@@ -51,17 +84,17 @@ class AutoRouteListener
 
         $autoRoute = null;
         foreach ($updates as $entity) {
-            if ($this->isAutoRouteable($entity)) {
+            if ($this->isAutoRouteEnabled($entity)) {
 //                $locale = $uow->getCurrentLocale($document);
 
                 $uriContextCollection = new UriContextCollection($entity);
-                $arm->buildUriContextCollection($uriContextCollection);
+                $manager->buildUriContextCollection($uriContextCollection);
 
                 // refactor this.
+                /** @var UriContext $uriContext */
                 foreach ($uriContextCollection->getUriContexts() as $uriContext) {
                     $autoRoute = $uriContext->getAutoRoute();
                     $em->persist($autoRoute);
-                    $uow->computeChangeSets();
                 }
 
                 // reset locale to the original locale
@@ -73,22 +106,22 @@ class AutoRouteListener
 
         $removes = $uow->getScheduledEntityDeletions();
         foreach ($removes as $entity) {
-            if ($this->isAutoRouteable($entity)) {
-                $referrers = $em->getReferrers($entity);
-                $referrers = $referrers->filter(function ($referrer) {
-                    if ($referrer instanceof AutoRoute) {
-                        return true;
-                    }
+            if ($this->isAutoRouteEnabled($entity)) {
+                $name  = $contentRepo->getContentId($entity);
+                $route = $provider->getRouteByName($name);
 
-                    return false;
-                });
-                foreach ($referrers as $autoRoute) {
-                    $uow->scheduleForDelete($autoRoute);
+                if ($route) {
+                    $em->remove($route);
                 }
             }
         }
+
+        $uow->computeChangeSets();
     }
 
+    /**
+     * @param ManagerEventArgs $args
+     */
     public function endFlush(ManagerEventArgs $args)
     {
         $em  = $args->getObjectManager();
@@ -103,7 +136,12 @@ class AutoRouteListener
         $this->postFlushDone = false;
     }
 
-    private function isAutoRouteable($entity)
+    /**
+     * @param $entity
+     *
+     * @return bool
+     */
+    private function isAutoRouteEnabled($entity)
     {
         try {
             return (bool)$this->getMetadataFactory()->getMetadataForClass(get_class($entity));

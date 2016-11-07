@@ -5,7 +5,7 @@ services:
             - 'Ferrandini\Urlizer::urlize'
 
     orm_routing.auto.auto_route_manager:
-        class: Symfony\Cmf\Component\RoutingAuto\AutoRouteManager
+        class: SymfonyContrib\Bundle\OrmRoutingBundle\Manager\AutoRouteManager
         arguments:
             - "@orm_routing.auto.adapter"
             - "@orm_routing.auto.uri_generator"

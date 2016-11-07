@@ -2,8 +2,13 @@
 
 namespace SymfonyContrib\Bundle\OrmRoutingBundle\Manager;
 
+use Symfony\Cmf\Component\RoutingAuto\AdapterInterface;
+use Symfony\Cmf\Component\RoutingAuto\DefunctRouteHandlerInterface;
 use Symfony\Cmf\Component\RoutingAuto\Model\AutoRouteInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Cmf\Component\RoutingAuto\UriContext;
+use Symfony\Cmf\Component\RoutingAuto\UriContextCollectionBuilder;
+use Symfony\Cmf\Component\RoutingAuto\UriGeneratorInterface;
+use SymfonyContrib\Bundle\OrmRoutingBundle\Context\UriContextCollection;
 use SymfonyContrib\Bundle\OrmRoutingBundle\Entity\Route;
 
 /**
@@ -40,7 +45,7 @@ class AutoRouteManager
      * @param AdapterInterface             $adapter             Database adapter
      * @param UriGeneratorInterface        $uriGenerator        Routing auto URL generator
      * @param DefunctRouteHandlerInterface $defunctRouteHandler Handler for defunct routes
-     * @param EventDispatcher              $eventDispatcher     Dispatcher for events
+     * @param UriContextCollectionBuilder  $collectionBuilder
      */
     public function __construct(
         AdapterInterface $adapter,
@@ -63,6 +68,7 @@ class AutoRouteManager
     {
         $this->collectionBuilder->build($uriContextCollection);
 
+        /** @var UriContext $uriContext */
         foreach ($uriContextCollection->getUriContexts() as $uriContext) {
             $subject = $uriContextCollection->getSubjectObject();
 
@@ -100,8 +106,7 @@ class AutoRouteManager
                 // objects.
                 //
                 // See: https://github.com/symfony-cmf/RoutingAuto/issues/73
-//                $autoRoute = $this->adapter->createAutoRoute($uriContext, $subject, $autoRouteTag);
-                $autoRoute = $this->adapter->createOrUpdateAutoRoute($uriContext, $subject, $autoRouteTag);
+                $autoRoute = $this->adapter->createAutoRoute($uriContext, $subject, $autoRouteTag);
             }
 
             $uriContext->setAutoRoute($autoRoute);

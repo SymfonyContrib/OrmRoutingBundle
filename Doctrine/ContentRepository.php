@@ -81,25 +81,28 @@ class ContentRepository implements ContentRepositoryInterface
      *
      * @return ObjectManager
      */
-    protected function getObjectManager()
+    public function getObjectManager()
     {
         return $this->managerRegistry->getManager($this->managerName);
     }
-
-
 
     /**
      * Determine target class and id for this content.
      *
      * @param mixed $identifier as produced by getContentId
      *
-     * @return array with model first element, id second
+     * @return array
      */
     public function getModelAndId($identifier)
     {
         return explode(':', $identifier, 2);
     }
 
+    /**
+     * @param $identifier
+     *
+     * @return int
+     */
     public function getModelId($identifier)
     {
         return explode(':', $identifier, 2)[1];
@@ -118,12 +121,22 @@ class ContentRepository implements ContentRepositoryInterface
     }
 
     /**
+     * @param string $name
+     *
+     * @return object
+     */
+    public function findByName($name)
+    {
+        return $this->findById($name);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getContentId($content)
     {
         if (!is_object($content)) {
-            return;
+            return false;
         }
 
         try {
@@ -134,9 +147,9 @@ class ContentRepository implements ContentRepositoryInterface
                 throw new \Exception(sprintf('Class "%s" must use only one identifier', $class));
             }
 
-            return implode(':', array($class, reset($ids)));
+            return implode(':', [$class, reset($ids)]);
         } catch (\Exception $e) {
-            return;
+            return false;
         }
     }
 }
