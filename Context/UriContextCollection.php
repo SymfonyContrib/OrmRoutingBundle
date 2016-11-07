@@ -18,9 +18,8 @@ class UriContextCollection extends CmfUriContextCollection
      */
     public function containsAutoRoute(AutoRouteInterface $autoRoute)
     {
-        die('hi');
         foreach ($this->uriContexts as $uriContext) {
-            if ($autoRoute->getName() === $uriContext->getAutoRoute()->getName()) {
+            if ($autoRoute->getId() === $uriContext->getAutoRoute()->getId()) {
                 return true;
             }
         }

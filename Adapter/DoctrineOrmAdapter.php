@@ -55,7 +55,7 @@ class DoctrineOrmAdapter implements AdapterInterface
      */
     public function migrateAutoRouteChildren(AutoRouteInterface $srcAutoRoute, AutoRouteInterface $destAutoRoute)
     {
-        throw new \RuntimeException('TODO');
+        $this->removeAutoRoute($srcAutoRoute);
     }
 
     /**
@@ -143,7 +143,7 @@ class DoctrineOrmAdapter implements AdapterInterface
      */
     public function getReferringAutoRoutes($contentEntity)
     {
-        throw new \RuntimeException('TODO');
+        return $this->findAllRoutesForName($this->buildContentId($contentEntity));
     }
 
     /**
@@ -161,6 +161,13 @@ class DoctrineOrmAdapter implements AdapterInterface
         return $this->entityManager
             ->getRepository(Route::class)
             ->findOneBy(['name' => $name]);
+    }
+
+    public function findAllRoutesForName($name)
+    {
+        return $this->entityManager
+            ->getRepository(Route::class)
+            ->findBy(['name' => $name]);
     }
 
     public function buildContentId($contentEntity)

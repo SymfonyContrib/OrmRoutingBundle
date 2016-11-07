@@ -116,6 +116,8 @@ class AutoRouteListener
             }
         }
 
+        $manager->handleDefunctRoutes();
+
         $uow->computeChangeSets();
     }
 
